@@ -1,0 +1,23 @@
+enum OrderType {
+  one_time
+  subscription
+}
+
+type Order @key(fields: "id") {
+  id: ID!
+  name: String
+  price: String!
+  quantity: String!
+  orderType: String!
+  orderedBy: [User]
+}
+
+extend type User @key(fields: "id") {
+  id: ID! @external
+  orders: [Order]
+}
+
+extend type Query {
+  order(orderType: OrderType): [Order]
+  orders: [Order]
+}

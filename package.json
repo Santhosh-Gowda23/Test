@@ -1,0 +1,30 @@
+{
+  "name": "apollo_federation",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "server": "concurrently -k npm:server:*",
+    "server:rest": "json-server -q db.json",
+    "server:users": "nodemon ./apps/user.js ",
+    "server:subscriptions": "nodemon ./apps/subscriptions.js",
+    "server:orders": "nodemon ./apps/orders.js",
+    "generate": "rover subgraph introspect http://localhost:4001 > ./user.graphql && rover subgraph introspect http://localhost:4002 > ./subscriptions.graphql && rover subgraph introspect http://localhost:4003 > ./orders.graphql",
+    "dev": "./router --supergraph supergraph.graphql --config router.yaml"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/gateway": "^0.50.0",
+    "@apollo/subgraph": "^0.4.0",
+    "apollo-server": "^3.6.7",
+    "concurrently": "^7.0.0",
+    "dotenv": "^16.0.3",
+    "graphql": "^15.8.0",
+    "json-server": "^0.17.0",
+    "node-fetch": "^2.6.0",
+    "nodemon": "^2.0.15"
+  }
+}

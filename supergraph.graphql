@@ -1,0 +1,84 @@
+schema
+  @core(feature: "https://specs.apollo.dev/core/v0.2"),
+  @core(feature: "https://specs.apollo.dev/join/v0.1", for: EXECUTION)
+{
+  query: Query
+}
+
+directive @core(as: String, feature: String!, for: core__Purpose) repeatable on SCHEMA
+
+directive @join__field(graph: join__Graph, provides: join__FieldSet, requires: join__FieldSet) on FIELD_DEFINITION
+
+directive @join__graph(name: String!, url: String!) on ENUM_VALUE
+
+directive @join__owner(graph: join__Graph!) on INTERFACE | OBJECT
+
+directive @join__type(graph: join__Graph!, key: join__FieldSet) repeatable on INTERFACE | OBJECT
+
+type Order
+  @join__owner(graph: ORDERS)
+  @join__type(graph: ORDERS, key: "id")
+{
+  id: ID! @join__field(graph: ORDERS)
+  name: String @join__field(graph: ORDERS)
+  orderType: String! @join__field(graph: ORDERS)
+  orderedBy: [User] @join__field(graph: ORDERS)
+  price: String! @join__field(graph: ORDERS)
+  quantity: String! @join__field(graph: ORDERS)
+}
+
+enum OrderType {
+  one_time
+  subscription
+}
+
+type Query {
+  order(orderType: OrderType): [Order] @join__field(graph: ORDERS)
+  orders: [Order] @join__field(graph: ORDERS)
+  subscription(id: ID!): Subscriptions @join__field(graph: SUBSCRIPTIONS)
+  subscriptions: [Subscriptions] @join__field(graph: SUBSCRIPTIONS)
+  user(id: ID!): User @join__field(graph: USERS)
+  users: [User] @join__field(graph: USERS)
+}
+
+type Subscriptions {
+  billingAddress: String
+  frequency: String!
+  id: ID!
+  orderDate: String
+  price: String!
+  shippingDate: String
+  userList: [User]
+}
+
+type User
+  @join__owner(graph: USERS)
+  @join__type(graph: USERS, key: "id")
+  @join__type(graph: ORDERS, key: "id")
+  @join__type(graph: SUBSCRIPTIONS, key: "id")
+{
+  id: ID! @join__field(graph: USERS)
+  name: String @join__field(graph: USERS)
+  orders: [Order] @join__field(graph: ORDERS)
+  subscriptions: [Subscriptions] @join__field(graph: SUBSCRIPTIONS)
+}
+
+enum core__Purpose {
+  """
+  `EXECUTION` features provide metadata necessary to for operation execution.
+  """
+  EXECUTION
+
+  """
+  `SECURITY` features provide metadata necessary to securely resolve fields.
+  """
+  SECURITY
+}
+
+scalar join__FieldSet
+
+enum join__Graph {
+  ORDERS @join__graph(name: "orders" url: "http://localhost:4003")
+  SUBSCRIPTIONS @join__graph(name: "subscriptions" url: "http://localhost:4002")
+  USERS @join__graph(name: "users" url: "http://localhost:4001")
+}

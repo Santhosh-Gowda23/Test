@@ -1,0 +1,13 @@
+subgraphs:
+  users:
+    routing_url: http://localhost:4001
+    schema:
+      file: "./user.graphql"
+  subscriptions:
+    routing_url: http://localhost:4002
+    schema:
+      file: "./subscriptions.graphql"
+  orders:
+    routing_url: http://localhost:4003
+    schema:
+      file: "./orders.graphql"

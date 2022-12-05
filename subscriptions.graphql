@@ -1,0 +1,19 @@
+type Subscriptions {
+  id: ID!
+  userList: [User]
+  price: String!
+  frequency: String!
+  orderDate: String
+  shippingDate: String
+  billingAddress: String
+}
+
+extend type User @key(fields: "id") {
+  id: ID! @external
+  subscriptions: [Subscriptions]
+}
+
+extend type Query {
+  subscription(id: ID!): Subscriptions
+  subscriptions: [Subscriptions]
+}
